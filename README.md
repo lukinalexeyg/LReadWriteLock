@@ -9,26 +9,25 @@ LMutex - синхронный/асинхронный мьютекс для Qt-п
 + Определение своего алгоритма формирования очереди выполнения запросов на доступ ресурсу
 ## Примеры:
 + Синхронный режим
-``
-lmutex.waitForRead();
-// working with the resource
-lmutex.release();
-``
+
+	lmutex.waitForRead();
+	// working with the resource
+	lmutex.release();
+
 + Асинхронный режим
-``
-void Worker::acquereForRead() {
-	lmutex.acquereForRead(this, "onReadyRead");
-	// do something else
-}
-void Worker::onReadyRead() { // declare method as a slot
-	// working with the resource
-	lmutex.release();
-}
-``
+
+	void Worker::acquereForRead() {
+		lmutex.acquereForRead(this, "onReadyRead");
+		// do something else
+	}
+	void Worker::onReadyRead() { // declare method as a slot
+		// working with the resource
+		lmutex.release();
+	}
+
 или с помощью lambda-функции
-``
-lmutex.acquereForRead(this, [=](){
-	// working with the resource
-	lmutex.release();
-}
-``
+
+	lmutex.acquereForRead(this, [=](){
+		// working with the resource
+		lmutex.release();
+	}
