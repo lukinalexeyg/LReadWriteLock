@@ -32,3 +32,4 @@ lmutex.acquereForRead(this, [=](){
     // working with the resource
     lmutex.release();
 }
+// do something else
