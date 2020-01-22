@@ -4,7 +4,7 @@
 #pragma once
 
 #include <QMutex>
-#include "lmutex.h"
+#include "lreadwritelock.h"
 
 class Storage : public QObject
 {
@@ -21,14 +21,15 @@ public:
     static Storage *instance();
     static void destroyInstance();
 
-    bool acquireForRead(QObject *object, const char *member, int priority = 0);
-    bool acquireForRead(QObject *object, std::function<void()> function, int priority = 0);
+    const Data *waitForRead(int priority);
+    Data *waitForWrite(int priority);
 
-    bool acquireForWrite(QObject *object, const char *member, int priority = 0);
-    bool acquireForWrite(QObject *object, std::function<void()> function, int priority = 0);
+    void acquireForRead(QObject *object, const char *member, int priority = 0);
+    void acquireForRead(QObject *object, std::function<void()> function, int priority = 0);
 
-    const Data *waitForRead();
-    Data *waitForWrite();
+    void acquireForWrite(QObject *object, const char *member, int priority = 0);
+    void acquireForWrite(QObject *object, std::function<void()> function, int priority = 0);
+
     void release();
 
     const Data *read();
@@ -38,7 +39,7 @@ private:
     static Storage *m_instance;
     static QMutex m_instanceMutex;
 
-    LMutex *m_lMutex;
+    LReadWriteLock *m_lmutex;
     Data *m_data;
 
 private:
@@ -52,7 +53,7 @@ private:
 class AutoReleaseStorage
 {
 public:
-    ~AutoReleaseStorage() { Storage::instance()->release(); }
+    inline ~AutoReleaseStorage() { Storage::instance()->release(); }
 };
 
 #endif // STORAGE_H

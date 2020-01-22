@@ -6,8 +6,6 @@
 #include <QDebug>
 #include <QThread>
 
-QString threadIdString();
-
 #define FUNCTION_LOG Log __log__(__FUNCTION__);
 #define DEBUG_LOG qDebug().noquote() << threadIdString() << __FUNCTION__ <<
 #define INFO_LOG qInfo().noquote() << threadIdString() << __FUNCTION__ <<
@@ -16,11 +14,12 @@ QString threadIdString();
 #define CRITICAL_LOG qCritical().noquote() << FUNCTION_LINE <<
 #define FATAL_LOG qFatal().noquote() << FUNCTION_LINE <<
 
+QString threadIdString();
+
 class Log
 {
 public:
-    Log(const char *function) : m_function(function)
-    { qDebug().noquote() << threadIdString() << "+" << function; }
+    Log(const char *function) : m_function(function) { qDebug().noquote() << threadIdString() << "+" << function; }
     ~Log() { qDebug().noquote() << threadIdString() << "-" << m_function; }
 
 private:

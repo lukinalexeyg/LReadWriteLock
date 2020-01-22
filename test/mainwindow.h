@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QThread>
 #include <QVBoxLayout>
 #include "worker.h"
 
@@ -16,10 +15,9 @@ public:
 
 private:
     QVector<Worker*> m_workers;
-    QVector<QThread*> m_threads;
 
 private:
-    QVBoxLayout *setWorker(QThread *thread, int index);
+    QVBoxLayout *setWorker();
     void stopThread(QThread *thread);
 };
 

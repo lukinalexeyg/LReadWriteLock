@@ -11,7 +11,7 @@ QMutex Storage::m_instanceMutex;
 Storage::Storage(QObject *parent) :
     QObject(parent)
 {
-    m_lMutex = new LMutex(this);
+    m_lmutex = new LReadWriteLock(this);
     m_data = new Data;
 }
 
@@ -45,62 +45,59 @@ void Storage::destroyInstance()
 
 
 
-bool Storage::acquireForRead(QObject *object, const char *member, int priority)
+const Storage::Data *Storage::waitForRead(int priority)
 {
-    return m_lMutex->acquereForRead(object, member, priority);
-}
-
-
-
-bool Storage::acquireForRead(QObject *object, std::function<void()> function, int priority)
-{
-    return m_lMutex->acquereForRead(object, function, priority);
-}
-
-
-
-bool Storage::acquireForWrite(QObject *object, const char *member, int priority)
-{
-    return m_lMutex->acquereForWrite(object, member, priority);
-}
-
-
-
-bool Storage::acquireForWrite(QObject *object, std::function<void ()> function, int priority)
-{
-    return m_lMutex->acquereForWrite(object, function, priority);
-}
-
-
-
-const Storage::Data *Storage::waitForRead()
-{
-    m_lMutex->waitForRead();
+    m_lmutex->waitForRead(priority);
     return m_data;
 }
 
 
 
-Storage::Data *Storage::waitForWrite()
+Storage::Data *Storage::waitForWrite(int priority)
 {
-    m_lMutex->waitForWrite();
+    m_lmutex->waitForWrite(priority);
     return m_data;
+}
+
+
+
+void Storage::acquireForRead(QObject *object, const char *member, int priority)
+{
+    m_lmutex->acquereForRead(object, member, priority);
+}
+
+
+
+void Storage::acquireForRead(QObject *object, std::function<void()> function, int priority)
+{
+    m_lmutex->acquereForRead(object, function, priority);
+}
+
+
+
+void Storage::acquireForWrite(QObject *object, const char *member, int priority)
+{
+    m_lmutex->acquereForWrite(object, member, priority);
+}
+
+
+
+void Storage::acquireForWrite(QObject *object, std::function<void ()> function, int priority)
+{
+    m_lmutex->acquereForWrite(object, function, priority);
 }
 
 
 
 void Storage::release()
 {
-    m_lMutex->release();
+    m_lmutex->release();
 }
 
 
 
 const Storage::Data *Storage::read()
 {
-    if (m_lMutex->isAcquiredForRead())
-        return m_data;
-
     CRITICAL_LOG "access denied";
     return nullptr;
 }
@@ -109,9 +106,6 @@ const Storage::Data *Storage::read()
 
 Storage::Data *Storage::write()
 {
-    if (m_lMutex->isAcquiredForWrite())
-        return m_data;
-
     CRITICAL_LOG "access denied";
     return nullptr;
 }
