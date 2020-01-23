@@ -11,25 +11,25 @@ LReadWriteLock - синхронно-асинхронный блокировщи�
 ## Примеры:
 + Синхронный запрос
 ```c
-lmutex.waitForRead();
+lReadWriteLock.waitForRead();
 // working with the resource
-lmutex.release();
+lReadWriteLock.release();
 ```
 + Асинхронный запрос
 ```c
 void Worker::acquereForRead() {
-    lmutex.acquereForRead(this, "onReadyRead");
+    lReadWriteLock.acquereForRead(this, "onReadyRead");
     // do something else
 }
 
 void Worker::onReadyRead() { // declare method as a slot
     // working with the resource
-    lmutex.release();
+    lReadWriteLock.release();
 }
 ```
 или с помощью лямбда-функции
 ```c
-lmutex.acquereForRead(this, [=](){
+lReadWriteLock.acquereForRead(this, [=](){
     // working with the resource
-    lmutex.release();
+    lReadWriteLock.release();
 }
