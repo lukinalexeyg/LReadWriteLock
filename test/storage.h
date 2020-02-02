@@ -30,16 +30,16 @@ public:
     void acquireForWrite(QObject *object, const char *member, int priority = 0);
     void acquireForWrite(QObject *object, std::function<void()> function, int priority = 0);
 
-    void release();
+    inline void release()       { m_lReadWriteLock->release(); }
 
-    const Data *read();
-    Data *write();
+    inline const Data *read()   { return m_data; }
+    inline Data *write()        { return m_data; }
 
 private:
     static Storage *m_instance;
     static QMutex m_instanceMutex;
 
-    LReadWriteLock *m_lmutex;
+    LReadWriteLock *m_lReadWriteLock;
     Data *m_data;
 
 private:

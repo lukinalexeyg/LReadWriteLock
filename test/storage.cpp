@@ -11,7 +11,7 @@ QMutex Storage::m_instanceMutex;
 Storage::Storage(QObject *parent) :
     QObject(parent)
 {
-    m_lmutex = new LReadWriteLock(this);
+    m_lReadWriteLock = new LReadWriteLock(this);
     m_data = new Data;
 }
 
@@ -47,7 +47,7 @@ void Storage::destroyInstance()
 
 const Storage::Data *Storage::waitForRead(int priority)
 {
-    m_lmutex->waitForRead(priority);
+    m_lReadWriteLock->waitForRead(priority);
     return m_data;
 }
 
@@ -55,7 +55,7 @@ const Storage::Data *Storage::waitForRead(int priority)
 
 Storage::Data *Storage::waitForWrite(int priority)
 {
-    m_lmutex->waitForWrite(priority);
+    m_lReadWriteLock->waitForWrite(priority);
     return m_data;
 }
 
@@ -63,49 +63,26 @@ Storage::Data *Storage::waitForWrite(int priority)
 
 void Storage::acquireForRead(QObject *object, const char *member, int priority)
 {
-    m_lmutex->acquereForRead(object, member, priority);
+    m_lReadWriteLock->acquereForRead(object, member, priority);
 }
 
 
 
 void Storage::acquireForRead(QObject *object, std::function<void()> function, int priority)
 {
-    m_lmutex->acquereForRead(object, function, priority);
+    m_lReadWriteLock->acquereForRead(object, function, priority);
 }
 
 
 
 void Storage::acquireForWrite(QObject *object, const char *member, int priority)
 {
-    m_lmutex->acquereForWrite(object, member, priority);
+    m_lReadWriteLock->acquereForWrite(object, member, priority);
 }
 
 
 
 void Storage::acquireForWrite(QObject *object, std::function<void ()> function, int priority)
 {
-    m_lmutex->acquereForWrite(object, function, priority);
-}
-
-
-
-void Storage::release()
-{
-    m_lmutex->release();
-}
-
-
-
-const Storage::Data *Storage::read()
-{
-    CRITICAL_LOG "access denied";
-    return nullptr;
-}
-
-
-
-Storage::Data *Storage::write()
-{
-    CRITICAL_LOG "access denied";
-    return nullptr;
+    m_lReadWriteLock->acquereForWrite(object, function, priority);
 }
