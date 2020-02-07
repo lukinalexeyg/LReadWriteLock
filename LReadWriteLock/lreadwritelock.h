@@ -1,3 +1,8 @@
+/*!
+  @file
+  @author Alexey Lukin
+*/
+
 #ifndef LREADWRITELOCK_H
 #define LREADWRITELOCK_H
 
@@ -5,9 +10,6 @@
 
 #include <QMap>
 #include "lreadwritetask.h"
-
-// Alexey Lukin
-// https://github.com/lukinalexeyg/LReadWriteLock
 
 class LReadWriteLock : public QObject
 {
@@ -76,7 +78,6 @@ public:
                          LayerOverwrite defaultlayerOverwrite = DefaultLayerOverwrite,
                          OperationOverwrite defaultOperationOverwrite = DefaultOperationOverwrite);
 
-    void runTasks();
     void release();
 
     bool isAqueredForRead(QObject *object, const char *member);
@@ -105,6 +106,7 @@ private:
 private:
     bool tryRun(LReadWriteTask *task);
     void overwrite(LReadWriteTask *task);
+    void runTasks();
     void deleteNullAsyncQueuedTasks();
     bool isReadyToRun(LReadWriteTask *task);
     QPair<int, int> runningTasksCount(LReadWriteTask *task);
